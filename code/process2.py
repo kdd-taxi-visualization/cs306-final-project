@@ -1,29 +1,19 @@
-import os
-import json
 import pandas as pd
-import numpy as np
 from ast import literal_eval
+from myUtils import read_json
 
-
-def read_json(file_path: str) -> list or dict:
-    if not os.path.exists(file_path):
-        return None
-    with open(file_path, encoding='utf-8') as f:
-        rp_list = json.load(f)
-    return rp_list
-
+DISTANCE_THRESHOLD = .5
+JSON_FILE = "../data/distance.json"
+CSV_FILE = "../data/temp1.csv"
+OUTPUT_FILE = "../data/temp2-500m.csv"
 
 if __name__ == '__main__':
-    c = read_json("../data/distance.json")
-    df = pd.read_csv("../data/temp1.csv")
-    vendor = []
-    coordinates = []
-    timestamp = []
-    _topd = {}
+    c = read_json(JSON_FILE)
+    df = pd.read_csv(CSV_FILE)
+    vendor = []  # vendor 编号
+    coordinates = []  # 坐标集合
+    timestamp = []  # 时间戳
     cnt = 1
-    # print(type(literal_eval(df.iloc[0][2])))
-
-    DISTANCE_THRESHOLD = 20
 
     for index in range(0, len(c)):
         print(index, end='')
@@ -73,6 +63,11 @@ if __name__ == '__main__':
                         cord = []
                         tmp = []
                         last_i = i  # 更新last_i
-                        i+=1
-    pd.DataFrame(data={'vendor': vendor, 'coordinates': coordinates, 'timestamp': timestamp}).to_csv(
-        "../data/temp2.csv")
+                        i += 1
+    # 导出
+    pd.DataFrame(
+        data={
+            'vendor': vendor,
+            'coordinates': coordinates,
+            'timestamp': timestamp}
+    ).to_csv(OUTPUT_FILE)
